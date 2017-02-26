@@ -40,3 +40,5 @@ subspaceMOA.Rproj
 man
 
 *.class
+.Rproj.user
+*.Rproj

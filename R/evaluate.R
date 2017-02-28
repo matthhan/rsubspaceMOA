@@ -2,9 +2,9 @@
 #'
 #'@param dsc The clusterer whose current clustering should be evaluated.
 #'@param dsd The stream from which the data points for evaluation should be drawn.
-#'@param measure A vector of evaluation measures to use. By default, all supported measures are used.
+#'@param n How many points to evaluate over
+#'@param measures A vector of evaluation measures to use. By default, all supported measures are used.
 #'@param alsoTrainOn This will train the clusterer on the data points before running the evaluation.
-
 #'@description
 #'
 #'This function evaluates Subspace Clusterings based on data points from a stream.

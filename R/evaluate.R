@@ -34,5 +34,12 @@ evaluate_subspace <- function(dsc,
                                  returnSig="[D",
                                  method="getValues",
                                  evalArray = T)
-  return(list(names=result_names,values=result_values))
+  result_points <- rJava::.jcall(result,returnSig="[[D",method="getPoints",evalArray=T,simplify=T)
+  result_points_df <- data.frame(result_points)
+  names(result_points_df)[ncol(result_points_df)] <- "class"
+  return(list(names=result_names,values=result_values,points=result_points_df))
+}
+
+all_eval_measures <- function() {
+  c("clustering error","cmm subspace","entropy subspace","f1 subspace", "purity","rand statistic")
 }

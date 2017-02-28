@@ -52,7 +52,7 @@ row_from_two_values <- function(dataframe,hover_list,area_around_cursor) {
   #for the x and y axis is very different (e.g. x is between 0 and 1, y is between 1 and 10000),
   #the axes are not taken into account equally, which they really should.
   #To do so, we first subtract the smallest values of the data spaces for x and y
-  dim_vals <- c(dim_vals[1]-hover_list$domain$left,dim_vals[2]-hover_list$domain$bottom)
+  dim_vals <- c(dim_vals[1]-hover_list$domain$left,dim_vals[2]-hover_list$domaixn$bottom)
   dataframe_columns[dims[1]] <- dataframe_columns[dims[1]] - hover_list$domain$left
   dataframe_columns[dims[2]] <- dataframe_columns[dims[2]] - hover_list$domain$bottom
   #Then we divide by the width of the x and the y dataspace
@@ -68,5 +68,14 @@ row_from_two_values <- function(dataframe,hover_list,area_around_cursor) {
     return(NULL)
   }else {
     return(dataframe[best_index,])
+  }
+}
+incorporate_new_evalres <- function(old_evaluation_table,new_evalres) {
+  if(is.null(old_evaluation_table)) {
+    res <- data.frame(as.list(c(1,new_evalres$values)))
+    names(res) <- make.names(c("time",all_eval_measures()))
+    return(res)
+  } else {
+    return(rbind(old_evaluation_table,c(nrow(old_evaluation_table) + 1,new_evalres$values)))
   }
 }

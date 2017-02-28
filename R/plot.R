@@ -27,6 +27,8 @@
    ui <- makeUI(show_animate_buttons=T)
    server <- makeServer(dsc,dsd,step,delay=delay)
    
+   measures <- c("clustering error","cmm subspace","entropy subspace","f1 subspace", "purity","rand statistic")
+   
    onStart <- function(){}
    app <- shinyApp(ui=ui,server=server,onStart=onStart)
    runApp(app,launch.browser=launch.browser)
@@ -88,6 +90,11 @@ makeUI <- function(show_animate_buttons) {
                      fluidRow(
                        wellPanel(htmlOutput("tooltip"))
                      )
+    ),
+    conditionalPanel("shouldShowEvalResults",
+                     do.call(tabsetPanel,lapply(all_eval_measures(),function(measure){
+                       tabPanel(measure,plotOutput(outputId=make.names(measure))
+                      )}))
     )
   )
   return(ui)
@@ -95,6 +102,7 @@ makeUI <- function(show_animate_buttons) {
 #Creates a Shiny server to handle the logic of which plots are shown
 makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
   
+  measures <- make.names(all_eval_measures())
   if(is.data.frame(dsd)) {
     points <- dsd
     initial_data_frame <- format_data_from_dsc(dsc,points=points)
@@ -123,7 +131,9 @@ makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
     #Additionally we are keeping track of the data frame that is currently being
     #shown as well as whether we are currently running the stream clustering
     #continuously.
-    state <- reactiveValues(display_mode="matrix",current_data_frame=initial_data_frame,
+    state <- reactiveValues(display_mode="matrix",
+                            current_data_frame=initial_data_frame,
+                            evaluation_results=NULL,
                             running=F,
                             should_perform_step=F,
                             plot_was_recently_drawn=F)
@@ -154,12 +164,11 @@ makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
     observe({
       if(state$should_perform_step) {
         isolate({
-          new_points <- get_points(dsd,step,class=T)
           withProgress({
-            update(dsc,DSD_Memory(new_points[,1:(ncol(new_points)-1)]),step)
+            evalres <- evaluate_subspace(dsc,dsd,step,alsoTrainOn = T)
           },message="Updating the Clustering")
-          res <- format_data_from_dsc(dsc,points=new_points)
-          state$current_data_frame  <-  res
+          state$current_data_frame <- format_data_from_dsc(dsc,points=evalres$points)
+          state$evaluation_results <- incorporate_new_evalres(state$evaluation_results,evalres)
         })
         state$should_perform_step <- F
       }
@@ -216,6 +225,14 @@ makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
       res <- dataframe_row_to_html(row)
       cat(res)
     })
+    lapply(measures,function(measure) {
+      output[[measure]] <- renderPlot ({
+        if(!is.null(state$evaluation_results)) {
+          return(ggplot(state$evaluation_results,aes_string("time",measure)) + geom_line())
+        }
+      })
+    })
+    
   }
   return(server)
 }

@@ -1,3 +1,4 @@
+#'@import rJava
 #'@export
 get_centers.DSC_SubspaceMOA <- function(x,type=c("auto","micro","macro"),...) {
   methodToCall <- ""
@@ -12,6 +13,7 @@ get_centers.DSC_SubspaceMOA <- function(x,type=c("auto","micro","macro"),...) {
   if(length(as.vector(res))==1 & as.vector(res)[1]==0)return(NULL)
   return(data.frame(res))
 }
+#'@import rJava
 #'@export
 get_weights.DSC_SubspaceMOA <- function(x,type=c("auto","micro","macro"),scale=NULL,...) {
   methodToCall <- ""
@@ -29,6 +31,7 @@ get_weights.DSC_SubspaceMOA <- function(x,type=c("auto","micro","macro"),scale=N
 
 #'@export
 #'@import stream
+#'@import rJava
 update.DSC_SubspaceMOA <- function(object,dsd,n = 1, verbose = FALSE, ...) {
   points <- get_points(dsd,n)
   dsc <- object

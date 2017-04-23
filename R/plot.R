@@ -219,9 +219,7 @@ makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
       }
     })
     output$tooltip <- renderPrint({
-      row <- row_from_two_values(dataframe=state$current_data_frame,
-                                 hover_list=input$detail_plot_hover,
-                                 area_around_cursor=0.05)
+      row <- nearPoints(state$current_data_frame,input$detail_plot_hover,maxpoints = 1)
       res <- dataframe_row_to_html(row)
       cat(res)
     })

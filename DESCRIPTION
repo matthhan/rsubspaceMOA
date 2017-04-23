@@ -18,7 +18,7 @@ Imports:
     grid (>= 3.2.2),
     fields (>= 8.3),
     magrittr (>= 1.5),
-    shiny (>= 0.12),
+    shiny (>= 1.0.2),
     methods,
     stats (>= 3.2.2)
 Depends:

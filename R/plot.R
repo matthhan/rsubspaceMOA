@@ -200,7 +200,7 @@ makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
     #Draw the plot matrix from the current data frame
     output$plot_matrix <- renderPlot({
       withProgress({
-        list_of_plots <- create_plot_matrix(state$current_data_frame)
+        list_of_plots <- create_plot_matrix(state$current_data_frame,dsc)
         incProgress(message="Creating Scatterplot Matrix")
         plotmatrix <- make_plot_matrix(list_of_plots,ncol=number_of_dimensions)
         incProgress(amount = 0.3,message="Displaying Scatterplot Matrix")
@@ -212,7 +212,7 @@ makeServer <- function(dsc,dsd,step=NULL,delay=5000) {
     output$detail_plot <- renderPlot({
       if(!is.null(last_plot_clicked_on_in_matrix())) {
         res <- state$current_data_frame %>%
-          basic_plot_from_dataframe(last_plot_clicked_on_in_matrix()) %>%
+          basic_plot_from_dataframe(last_plot_clicked_on_in_matrix(),dsc=dsc) %>%
           style_plot_for_detail()
         isolate({state$plot_was_recently_drawn <- T})
         res

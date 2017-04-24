@@ -16,6 +16,16 @@
 #'@param launch.browser will be passed on to \link[shiny]{runApp}, so that the
 #'  visualisation can be shown in e.g. RStudio's Viewer pane, if this is
 #'  desired.
+#'  
+#'@examples
+#'clusterer <- DSC_ThreeStage(DSC_p3c(),DSC_subspaceCluStream())
+#'stream <- DSD_RandomRBFSubspaceGeneratorEvents()
+#'
+#'
+#'\dontrun{
+#'animate_stream_interactive(clusterer,stream)
+#'}
+#'
 #'@export
 #'@import ggplot2
 #'@import shiny

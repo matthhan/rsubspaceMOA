@@ -101,19 +101,17 @@ makeUI <- function(show_animate_buttons) {
       ),
       conditionalPanel(
         "input.dummyInput=='detail'",
+        #The button to go back to the plot matrix view
+          actionButton(
+            inputId = "back_button",
+            label = "Back",
+            class = "btn-primary btn-large btn-block",
+            width = "80%"
+          ),
         fluidRow(
           plotOutput("detail_plot",
                      hover = "detail_plot_hover",
                      height = "600px")
-        ),
-        #The button to go back to the plot matrix view
-        fluidRow(
-          actionButton(
-            inputId = "back_button",
-            label = "",
-            icon = icon(name = "th"),
-            class = "btn-primary btn-large btn-block"
-          )
         ),
         #The text field in which information on the point that is hovered
         #over is given.

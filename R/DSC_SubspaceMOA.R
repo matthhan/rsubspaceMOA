@@ -39,18 +39,3 @@ update.DSC_SubspaceMOA <- function(object,dsd,n = 1, verbose = FALSE, ...) {
     rJava::.jcall(dsc$javaObj,"V","trainOn",row)
   })
 }
- 
-#'@import rJava
-isClusterInDim <- function(dsc,clusteri,dim) {
-  return(rJava::.jcall(dsc$javaObj,"Z","isClusterInDimension",as.integer(clusteri-1),as.integer(dim-1)))
-}
- 
-#'@import rJava
-getRadiusOfCluster <- function(dsc,clusteri) {
-  return(rJava::.jcall(dsc$javaObj,"D","getRadiusOfCluster",as.integer(clusteri-1),evalArray = T))
-}
- 
-#'@import rJava
-getBoundariesOfClusterInDim <- function(dsc,clusteri,dim) {
-  return(rJava::.jcall(dsc$javaObj,"[D","getBordersOfClusterInDimension",as.integer(clusteri-1),as.integer(dim-1)))
-}

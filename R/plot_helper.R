@@ -41,7 +41,7 @@ format_data_from_dsc <- function(dsc,points=NULL) {
   dataframe$type <- relevel(dataframe$type,"Microcluster")
   return(dataframe)
 }
-create_plot_matrix <- function(dataframe,dsc) {
+create_plot_matrix <- function(dataframe) {
   if(is.null(dataframe)) {
     return(NULL)
   }
@@ -61,7 +61,7 @@ create_plot_matrix <- function(dataframe,dsc) {
       }
       list_of_plots[[(i-1)*number_of_dimensions + j]] <- 
         dataframe %>%
-        basic_plot_from_dataframe(dims=c(j,i),dsc) %>%
+        basic_plot_from_dataframe(dims=c(j,i)) %>%
         style_plot_for_plotmatrix(axis_label_left=axis_label_left,
                                   axis_label_below=axis_label_below)
     }
@@ -69,59 +69,31 @@ create_plot_matrix <- function(dataframe,dsc) {
   return(list_of_plots)
 }
 
-add_shape_and_color_scales <- function(p,dataframe,dims) {
-    #Now we define plot symbols for Microclusters, Macroclusters and points.
-    #This is done implicitly based on the ordering of the types of data
-    #in the data frame. Shapes used are 1 (circles), 3 (crosses). 
-    #Some data might not contain macroclusters so in these cases, no color
-    #and shape should be defined for them.
-    macroclusters_present <- any(dataframe$type=="Macrocluster")
-    if(macroclusters_present) {
-      p <- p +
-      scale_color_manual(values=c("red","blue",rep("grey",20))) +
-      scale_shape_manual(values=c(1,3,4:20))
-    } else {
-      p <- p +
-      scale_color_manual(values=c("red",rep("grey",20))) +
-      scale_shape_manual(values=c(1,4:20))
-    }
-    return(p)
-}
-
-add_special_macrocluster_annotations <- function(p,dsc,dims) {
-  centers <- get_centers(dsc,type="macro") 
-  for(i in 1:(nrow(centers))) {
-    xval <- centers[i,dims[1]]
-    yval <- centers[i,dims[2]]
-    radius <- getRadiusOfCluster(dsc,i)
-    xboundaries <- getBoundariesOfClusterInDim(dsc,i,dims[1])
-    yboundaries <- getBoundariesOfClusterInDim(dsc,i,dims[2])
-    clusterinx <- isClusterInDim(dsc,i,dims[1])
-    clusteriny <- isClusterInDim(dsc,i,dims[2])
-    if(clusterinx && clusteriny) {
-      p <- p + annotate("point",x=xval,y=yval,color="blue",size=radius,shape=1)
-    }
-  }
-  return(p)  
-}
-
-basic_plot_from_dataframe <- function(dataframe,dims,dsc) {
+basic_plot_from_dataframe <- function(dataframe,dims) {
   #Create a basic ggplot plot based on a data frame as
   #produced by format_data_from_dsc.
   first_dimension_string <- names(dataframe)[dims[1]]
   second_dimension_string <- names(dataframe)[dims[2]]
+  p <- ggplot(dataframe,aes_string(x=first_dimension_string,y=second_dimension_string)) + 
+    geom_point(aes_string(shape="type",color="type",size="weight"))
   
-  if("DSC_ThreeStage" %in% class(dsc)) {
-    dataframe <- dataframe[dataframe$type != "Macrocluster",]  
-    p <- ggplot(dataframe,aes_string(x=first_dimension_string,y=second_dimension_string)) + 
-      geom_point(aes_string(shape="type",color="type",size="weight"))
-    p <- add_special_macrocluster_annotations(p,dsc,dims)
+  #Now we define plot symbols for Microclusters, Macroclusters and points.
+  #This is done implicitly based on the ordering of the types of data
+  #in the data frame. Shapes used are 1 (circles), 3 (crosses). 
+  #Some data might not contain macroclusters so in these cases, no color
+  #and shape should be defined for them.
+  macroclusters_present <- any(dataframe$type=="Macrocluster")
+  if(macroclusters_present) {
+    p <- p +
+    scale_color_manual(values=c("red","blue",rep("grey",20))) +
+    scale_shape_manual(values=c(1,3,4:20))
+  } else {
+    p <- p +
+    scale_color_manual(values=c("red",rep("grey",20))) +
+    scale_shape_manual(values=c(1,4:20))
   }
-  else {
-    p <- ggplot(dataframe,aes_string(x=first_dimension_string,y=second_dimension_string)) + 
-      geom_point(aes_string(shape="type",color="type",size="weight"))
-  }
-  return(add_shape_and_color_scales(p,dataframe))
+  
+  return(p)
 }
 #Styles an existing ggplot in such a way that it can be drawn in a scatterplot matrix
 style_plot_for_plotmatrix <- function(plot,axis_label_left=F,axis_label_below=F) {

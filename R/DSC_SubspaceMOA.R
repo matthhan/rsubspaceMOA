@@ -47,7 +47,8 @@ isClusterInDim <- function(dsc,clusteri,dim) {
  
 #'@import rJava
 getRadiusOfCluster <- function(dsc,clusteri) {
-  return(rJava::.jcall(dsc$javaObj,"D","getRadiusOfCluster",as.integer(clusteri-1),evalArray = T))
+  res <- rJava::.jcall(dsc$javaObj,"D","getRadiusOfCluster",as.integer(clusteri-1),evalArray = T)
+  return(res)
 }
  
 #'@import rJava

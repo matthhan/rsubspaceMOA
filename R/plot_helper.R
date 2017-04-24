@@ -99,12 +99,7 @@ add_special_macrocluster_annotations <- function(p,dsc,dims) {
     clusterinx <- isClusterInDim(dsc,i,dims[1])
     clusteriny <- isClusterInDim(dsc,i,dims[2])
     if(clusterinx && clusteriny) {
-      p <- p + annotate("point",x=xval,y=yval,size=radius*100,color="blue",shape=1)
-    } else if(clusterinx) {
-      print(xboundaries)
-      p <- p + annotate("vline",xintercept=xboundaries[1],color="blue") + annotate("vline",xintercept=xboundaries[2],color="blue")
-    } else if(clusteriny) {
-      p <- p + annotate("hline",yintercept=yboundaries[1],color="blue") + annotate("hline",yintercept=yboundaries[2],color="blue")
+      p <- p + annotate("point",x=xval,y=yval,color="blue",size=radius,shape=1)
     }
   }
   return(p)  
